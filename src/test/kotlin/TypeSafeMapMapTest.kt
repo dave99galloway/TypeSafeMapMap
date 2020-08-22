@@ -5,7 +5,7 @@ import org.junit.Test
 
 class TypeSafeMapMapTest {
 
-    lateinit var typeSafeMapMap: TypeSafeMapMap
+    private lateinit var typeSafeMapMap: ITypeSafeMapMap
 
     @Before
     fun setUp() {
