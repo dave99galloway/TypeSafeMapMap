@@ -12,8 +12,6 @@ class TypeSafeMapMap {
     }
 
     inline fun <K:Any, reified V:Any>get(key: K) : V{
-        //var mapToAssign:
-
         return (map[V::class.java] as HashMap<Any,V>).get(key = key)as V
     }
 }
