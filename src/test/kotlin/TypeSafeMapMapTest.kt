@@ -20,7 +20,6 @@ class TypeSafeMapMapTest {
     @Test
     fun getMap() {
         assertThat(typeSafeMapMap.map).isNotNull
-
     }
 
     @Test

@@ -3,7 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
 }
 
-group 'dave00galloway'
+//mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
+group 'com.github.dave99galloway'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
