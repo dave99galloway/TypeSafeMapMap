@@ -11,12 +11,18 @@ interface ITypeSafeMapMap {
 
 inline fun <K : Any, reified V : Any> ITypeSafeMapMap.get(key: K): V {
     val linkedMap = map[V::class.java] as LinkedMap<*, *>
-    return synchronizedMap(linkedMap).get(key = key) as V
+    val syncMap = synchronizedMap(linkedMap)
+    return synchronized(syncMap) {
+        syncMap.get(key = key) as V
+    }
 }
 
 inline fun <reified V : Any> ITypeSafeMapMap.get(): V {
     val linkedMap = map[V::class.java] as LinkedMap<*, *>
-    return synchronizedMap(linkedMap)[linkedMap.lastKey()] as V
+    val syncMap = synchronizedMap(linkedMap)
+    return synchronized(syncMap) {
+        syncMap[linkedMap.lastKey()] as V
+    }
 }
 
 class TypeSafeMapMap : ITypeSafeMapMap {
@@ -29,7 +35,11 @@ class TypeSafeMapMap : ITypeSafeMapMap {
         }
         /*TODO:- this is the big one, can we remove this unchecked cast and still make this class work?*/
         @Suppress("UNCHECKED_CAST")
-        (map[value::class.java] as LinkedMap<Any, V>)[key] = value
+        val linkedMap = map[value::class.java] as LinkedMap<Any, V>
+        val syncMap = synchronizedMap(linkedMap)
+        synchronized(syncMap) {
+            syncMap[key] = value
+        }
     }
     // inline reified methods can't be defined on an interface, but can be defined as extensions.
     // this isn't the same thing, but allows us to use an abstraction instead of having to use the concrete class
