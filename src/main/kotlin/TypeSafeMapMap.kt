@@ -30,15 +30,18 @@ class TypeSafeMapMap : ITypeSafeMapMap {
     override val map: LinkedHashMap<Type, Any> = LinkedHashMap()
 
     override fun <K : Any, V : Any> put(key: K, value: V) {
-        if (!map.containsKey(key = value::class.java)) {
-            map[value::class.java] = LinkedMap<Any, V>()  //LinkedHashMap<Any,V>()
-        }
-        /*TODO:- this is the big one, can we remove this unchecked cast and still make this class work?*/
-        @Suppress("UNCHECKED_CAST")
-        val linkedMap = map[value::class.java] as LinkedMap<Any, V>
-        val syncMap = synchronizedMap(linkedMap)
-        synchronized(syncMap) {
-            syncMap[key] = value
+        val masterMap = synchronizedMap(map)
+        synchronized(masterMap){
+            if (!masterMap.containsKey(key = value::class.java)) {
+                masterMap[value::class.java] = LinkedMap<Any, V>()  //LinkedHashMap<Any,V>()
+            }
+            /*TODO:- this is the big one, can we remove this unchecked cast and still make this class work?*/
+            @Suppress("UNCHECKED_CAST")
+            val linkedMap = map[value::class.java] as LinkedMap<Any, V>
+            val syncMap = synchronizedMap(linkedMap)
+            synchronized(syncMap) {
+                syncMap[key] = value
+            }
         }
     }
     // inline reified methods can't be defined on an interface, but can be defined as extensions.
