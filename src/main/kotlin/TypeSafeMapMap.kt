@@ -1,5 +1,6 @@
 import org.apache.commons.collections4.map.LinkedMap
 import java.lang.reflect.Type
+import java.util.Collections.synchronizedMap
 
 interface ITypeSafeMapMap {
     /*TODO: - can we remove this map property and still make the get work? */
@@ -10,12 +11,12 @@ interface ITypeSafeMapMap {
 
 inline fun <K : Any, reified V : Any> ITypeSafeMapMap.get(key: K): V {
     val linkedMap = map[V::class.java] as LinkedMap<*, *>
-    return linkedMap.get(key = key) as V
+    return synchronizedMap(linkedMap).get(key = key) as V
 }
 
 inline fun <reified V : Any> ITypeSafeMapMap.get(): V {
     val linkedMap = map[V::class.java] as LinkedMap<*, *>
-    return linkedMap[linkedMap.lastKey()] as V
+    return synchronizedMap(linkedMap)[linkedMap.lastKey()] as V
 }
 
 class TypeSafeMapMap : ITypeSafeMapMap {
@@ -24,8 +25,7 @@ class TypeSafeMapMap : ITypeSafeMapMap {
 
     override fun <K : Any, V : Any> put(key: K, value: V) {
         if (!map.containsKey(key = value::class.java)) {
-            // todo: follow apache's advice for concurrency and thread safety and wrap in a synchronized map
-            map[value::class.java] = LinkedMap<Any, V>() //LinkedHashMap<Any,V>()
+            map[value::class.java] = LinkedMap<Any, V>()  //LinkedHashMap<Any,V>()
         }
         /*TODO:- this is the big one, can we remove this unchecked cast and still make this class work?*/
         @Suppress("UNCHECKED_CAST")
