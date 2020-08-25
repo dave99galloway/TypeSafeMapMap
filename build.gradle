@@ -3,9 +3,13 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
 }
 
+apply plugin: 'maven'
+apply plugin: 'signing'
+
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
 group 'com.github.dave99galloway'
-version '1.0-SNAPSHOT'
+archivesBaseName = 'type-safe-map-map'
+version '0.0.1'
 
 sourceCompatibility = 1.8
 
@@ -28,4 +32,64 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: findProperty(ossrhUsername), password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                authentication(userName: findProperty(ossrhUsername), password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'TypeSafeMapMap'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'A Map-like object that can be used to store instances of any type in a single map object in' +
+                        ' a type safe way, and retrieve in a type safe way using type inference, ' +
+                        'and no casting in the client code. It\'s intended use is for scenario data in testing'
+                url 'https://github.com/dave99galloway/TypeSafeMapMap'
+
+                scm {
+                    connection 'scm:git:https://github.com/dave99galloway/TypeSafeMapMap/tree/master'
+                    developerConnection 'scm:git:https://github.com/dave99galloway/TypeSafeMapMap.git'
+                    url 'https://github.com/dave99galloway/TypeSafeMapMap/tree/master'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'dave.99.galloway'
+                        name 'Dave Galloway'
+                    }
+                }
+            }
+        }
+    }
 }
