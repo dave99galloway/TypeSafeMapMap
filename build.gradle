@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
     id 'jacoco'
+    id 'maven-publish'
 }
 
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
