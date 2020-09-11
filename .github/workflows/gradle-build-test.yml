@@ -28,4 +28,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
-        run: ./gradlew clean build test
+        run: ./gradlew clean build test jacocoTestReport
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: build/libs
