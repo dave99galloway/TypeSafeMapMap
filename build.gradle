@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+    id 'jacoco'
 }
 
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
@@ -39,4 +40,13 @@ test {
     beforeTest { descriptor ->
         logger.lifecycle("Running test: $descriptor")
     }
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: $descriptor produced standard out/err: $event.message")
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }
