@@ -29,3 +29,14 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+
+test {
+    useJUnit()
+    testLogging.showStandardStreams = true
+    maxHeapSize = '1G'
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: $descriptor")
+    }
+}
