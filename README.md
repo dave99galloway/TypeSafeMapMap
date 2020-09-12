@@ -26,6 +26,13 @@ repositories {
 }
 ...
 
+dependencies {
+...
+    implementation files('build/TypeSafeMapMap-1.0-SNAPSHOT.jar')
+...
+}
+...
+
 task downloadFile(type: Download) {
     src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.0.4/TypeSafeMapMap-1.0-SNAPSHOT.jar'
     dest buildDir
