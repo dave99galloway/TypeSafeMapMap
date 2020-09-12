@@ -1,3 +1,5 @@
+package com.github.dave99galloway.typesafemapmap
+
 import org.apache.commons.collections4.map.LinkedMap
 import java.lang.reflect.Type
 import java.util.Collections.synchronizedMap

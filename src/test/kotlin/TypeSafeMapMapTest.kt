@@ -1,3 +1,6 @@
+import com.github.dave99galloway.typesafemapmap.ITypeSafeMapMap
+import com.github.dave99galloway.typesafemapmap.TypeSafeMapMap
+import com.github.dave99galloway.typesafemapmap.get
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
