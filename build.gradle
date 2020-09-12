@@ -3,11 +3,12 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
     id 'jacoco'
     id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "6.0.0"
 }
-
+def artifact_version = '0.1.0'
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
 group 'com.github.dave99galloway'
-version '1.0-SNAPSHOT'
+version artifact_version
 
 publishing {
     repositories {
@@ -67,6 +68,12 @@ test {
         logger.lifecycle("Test: $descriptor produced standard out/err: $event.message")
     }
     finalizedBy jacocoTestReport
+}
+
+shadowJar {
+    baseName = 'TypeSafeMapMap-shadow'
+    classifier = ''
+    archiveVersion = artifact_version
 }
 
 jacocoTestReport {
