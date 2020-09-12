@@ -5,7 +5,7 @@ plugins {
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "6.0.0"
 }
-def artifact_version = '0.1.1'
+def artifact_version = '0.1.2'
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
 group 'com.github.dave99galloway'
 version artifact_version
@@ -74,7 +74,14 @@ shadowJar {
     baseName = 'TypeSafeMapMap-shadow'
     classifier = ''
     archiveVersion = artifact_version
-    exclude "kotlin-runtime.jar"
+    minimize()
+    exclude 'kotlin.stdlib'
+    exclude 'kotlin-runtime.jar'
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup == 'org.jetbrains.kotlin'
+        })
+    }
 }
 
 jacocoTestReport {
