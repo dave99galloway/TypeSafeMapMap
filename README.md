@@ -21,24 +21,35 @@ plugins {
 repositories {
     mavenCentral()
     flatDir {
-        dirs 'build'
+        dirs 'libs'
     }
 }
 ...
 
 dependencies {
 ...
-    implementation files('build/TypeSafeMapMap-1.0-SNAPSHOT.jar')
+    implementation files('libs/TypeSafeMapMap-shadow-0.1.2.jar')
 ...
 }
 ...
 
 task downloadFile(type: Download) {
-    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.0.4/TypeSafeMapMap-1.0-SNAPSHOT.jar'
-    dest buildDir
+    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.1.2/TypeSafeMapMap-shadow-0.1.2.jar'
+    dest 'libs'// buildDir
+    onlyIfModified  true
 }
 
-build{
-    dependsOn( downloadFile)
+compileKotlin {
+    dependsOn(downloadFile)
 }
 ```
+
+create the dir 'libs' in the root of your project if that's wheree you want this lib to be downloaded to. you probably want to git ignore jar files from this dir, but add a text file and commit it so that the directory exists at build time. for an easier life you can use the build dir instead, but then you lose the benefit of setting onlyIfModified to true 
+
+## iterating over contents and removing items
+if you wish to do this you need to import 
+```$kotlin
+import org.apache.commons.collections4.map.LinkedMap
+``` 
+. the jar is bundled with TSMM so you don't need to add the dependency
+you then need to cast to LinkedMap to do the iteration and remove. this is until issue #7 is fixed
