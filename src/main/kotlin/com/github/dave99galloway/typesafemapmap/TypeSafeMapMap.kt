@@ -33,13 +33,12 @@ class TypeSafeMapMap : ITypeSafeMapMap {
 
     override fun <K : Any, V : Any> put(key: K, value: V) {
         val masterMap = synchronizedMap(map)
-        synchronized(masterMap){
-            if (!masterMap.containsKey(key = value::class.java)) {
-                masterMap[value::class.java] = LinkedMap<Any, V>()  //LinkedHashMap<Any,V>()
-            }
+        synchronized(masterMap) {
             /*TODO:- this is the big one, can we remove this unchecked cast and still make this class work?*/
             @Suppress("UNCHECKED_CAST")
-            val linkedMap = map[value::class.java] as LinkedMap<Any, V>
+            val linkedMap = masterMap.computeIfAbsent(value::class.java) {
+                LinkedMap<Any, V>()
+            } as LinkedMap<Any, V>
             val syncMap = synchronizedMap(linkedMap)
             synchronized(syncMap) {
                 syncMap[key] = value
