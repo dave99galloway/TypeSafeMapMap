@@ -44,7 +44,7 @@ compileKotlin {
 }
 ```
 
-create the dir 'libs' in the root of your project if that's wheree you want this lib to be downloaded to. you probably want to git ignore jar files from this dir.
+create the dir 'libs' in the root of your project if that's wheree you want this lib to be downloaded to. you probably want to git ignore jar files from this dir, but add a text file and commit it so that the directory exists at build time. for an easier life you can use the build dir instead, but then you lose the benefit of setting onlyIfModified to true 
 
 ## iterating over contents and removing items
 if you wish to do this you need to import 
