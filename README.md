@@ -21,24 +21,25 @@ plugins {
 repositories {
     mavenCentral()
     flatDir {
-        dirs 'build'
+        dirs 'libs'
     }
 }
 ...
 
 dependencies {
 ...
-    implementation files('build/TypeSafeMapMap-1.0-SNAPSHOT.jar')
+    implementation files('libs/TypeSafeMapMap-shadow-0.1.2.jar')
 ...
 }
 ...
 
 task downloadFile(type: Download) {
-    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.0.4/TypeSafeMapMap-1.0-SNAPSHOT.jar'
-    dest buildDir
+    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.1.2/TypeSafeMapMap-shadow-0.1.2.jar'
+    dest 'libs'// buildDir
+    onlyIfModified  true
 }
 
-build{
-    dependsOn( downloadFile)
+compileKotlin {
+    dependsOn(downloadFile)
 }
 ```
