@@ -43,3 +43,13 @@ compileKotlin {
     dependsOn(downloadFile)
 }
 ```
+
+create the dir 'libs' in the root of your project if that's wheree you want this lib to be downloaded to. you probably want to git ignore jar files from this dir.
+
+## iterating over contents and removing items
+if you wish to do this you need to import 
+```$kotlin
+import org.apache.commons.collections4.map.LinkedMap
+``` 
+. the jar is bundled with TSMM so you don't need to add the dependency
+you then need to cast to LinkedMap to do the iteration and remove. this is until issue #7 is fixed
