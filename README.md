@@ -28,13 +28,13 @@ repositories {
 
 dependencies {
 ...
-    implementation files('libs/TypeSafeMapMap-shadow-0.1.2.jar')
+    implementation files('libs/TypeSafeMapMap-shadow.jar')
 ...
 }
 ...
 
 task downloadFile(type: Download) {
-    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.1.2/TypeSafeMapMap-shadow-0.1.2.jar'
+    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.1.4/TypeSafeMapMap-shadow.jar'
     dest 'libs'// buildDir
     onlyIfModified  true
 }
@@ -44,7 +44,9 @@ compileKotlin {
 }
 ```
 
-create the dir 'libs' in the root of your project if that's where you want this lib to be downloaded to. you probably want to git ignore jar files from this dir, but add a text file and commit it so that the directory exists at build time. for an easier life you can use the build dir instead, but then you lose the benefit of setting onlyIfModified to true 
+create the dir 'libs' in the root of your project if that's where you want this lib to be downloaded to. 
+You probably want to git ignore jar files from this dir, but add a text file and commit it so that the directory exists at build time. 
+For an easier life you can use the build dir instead, but then you lose the benefit of setting onlyIfModified to true 
 
 ## iterating over contents and removing items
 if you wish to do this you need to import 
