@@ -8,7 +8,7 @@ plugins {
 def artifact_version = '0.1.3'
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
 group 'com.github.dave99galloway'
-version artifact_version
+// version artifact_version
 
 publishing {
     repositories {
@@ -73,7 +73,7 @@ test {
 shadowJar {
     baseName = 'TypeSafeMapMap-shadow'
     classifier = ''
-    archiveVersion = artifact_version
+    archiveVersion = '' // artifact_version
     minimize()
     exclude 'kotlin.stdlib'
     exclude 'kotlin-runtime.jar'
