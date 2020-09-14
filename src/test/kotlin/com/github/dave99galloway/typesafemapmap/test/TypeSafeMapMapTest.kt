@@ -1,6 +1,7 @@
 package com.github.dave99galloway.typesafemapmap.test
 
 import com.github.dave99galloway.typesafemapmap.ITypeSafeMapMap
+import com.github.dave99galloway.typesafemapmap.NoneOfThisTypeStoredException
 import com.github.dave99galloway.typesafemapmap.TypeSafeMapMap
 import com.github.dave99galloway.typesafemapmap.get
 import org.assertj.core.api.Assertions.assertThat
@@ -81,5 +82,17 @@ class TypeSafeMapMapTest {
         }
         val lastInt: Int = typeSafeMapMap.get()
         assertThat(lastInt).isEqualTo(10)
+    }
+
+    @Test(expected = NoneOfThisTypeStoredException::class)
+    fun retrieveAbsentType() {
+        val retrieved: String = typeSafeMapMap.get()
+        assertThat(retrieved).isNull()
+    }
+
+    @Test(expected = NoneOfThisTypeStoredException::class)
+    fun retrieveAbsentTypeWithKey() {
+        val retrieved: String = typeSafeMapMap.get("")
+        assertThat(retrieved).isNull()
     }
 }

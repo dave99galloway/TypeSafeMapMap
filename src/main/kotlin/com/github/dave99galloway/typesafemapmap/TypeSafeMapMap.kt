@@ -12,18 +12,25 @@ interface ITypeSafeMapMap {
 }
 
 inline fun <K : Any, reified V : Any> ITypeSafeMapMap.get(key: K): V {
-    val linkedMap = map[V::class.java] as LinkedMap<*, *>
-    val syncMap = synchronizedMap(linkedMap)
+    val syncMap = synchronizedMap(getMapOfType<V>())
     return synchronized(syncMap) {
         syncMap.get(key = key) as V
     }
 }
 
 inline fun <reified V : Any> ITypeSafeMapMap.get(): V {
-    val linkedMap = map[V::class.java] as LinkedMap<*, *>
+    val linkedMap = getMapOfType<V>()
     val syncMap = synchronizedMap(linkedMap)
     return synchronized(syncMap) {
         syncMap[linkedMap.lastKey()] as V
+    }
+}
+
+inline fun <reified V : Any> ITypeSafeMapMap.getMapOfType(): LinkedMap<*, *> {
+    return try {
+        map[V::class.java] as LinkedMap<*, *>
+    } catch (e: NullPointerException) {
+        throw  NoneOfThisTypeStoredException(V::class.java, e)
     }
 }
 
@@ -51,3 +58,7 @@ class TypeSafeMapMap : ITypeSafeMapMap {
     //        return (map[V::class.java] as HashMap<Any,V>).get(key = key)as V
     //    }
 }
+
+
+class NoneOfThisTypeStoredException(valueType: Any, cause: Throwable) :
+    Exception("No instances of $valueType are stored here", cause)
