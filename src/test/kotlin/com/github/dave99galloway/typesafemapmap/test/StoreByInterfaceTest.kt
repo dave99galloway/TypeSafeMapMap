@@ -46,11 +46,7 @@ class StoreByInterfaceTest {
     @Test
     fun storeConcreteAsAbstract() {
         val abstract = "abstract"
-        //val abstraction: AnAbstractIdea = ConcreteReality(abstract)
-        typeSafeMapMap.putAs<String, AnAbstractIdea>(
-            key = abstract,
-            value = ConcreteReality(abstract)
-        )//, typeKey = AnAbstractIdea::class.java)
+        typeSafeMapMap.putAs<String, AnAbstractIdea>(key = abstract, value = ConcreteReality(abstract))
         val retrieved: AnAbstractIdea = typeSafeMapMap.get(abstract)
         assertThat(retrieved.data).isEqualTo(abstract)
     }
@@ -59,7 +55,7 @@ class StoreByInterfaceTest {
     fun storeAbstractAsAbstract() {
         val abstract = "abstract"
         val abstraction: AnAbstractIdea = ConcreteReality(abstract)
-        typeSafeMapMap.putAs(key = abstract, value = abstraction) //,typeKey = AnAbstractIdea::class.java)
+        typeSafeMapMap.putAs(key = abstract, value = abstraction)
         val retrieved: AnAbstractIdea = typeSafeMapMap.get(abstract)
         assertThat(retrieved.data).isEqualTo(abstract)
     }
@@ -67,13 +63,8 @@ class StoreByInterfaceTest {
     @Test
     fun storeConcreteAsAbstractWithSafeCast() {
         val abstract = "abstract"
-        typeSafeMapMap.putAs(
-            key = abstract,
-            value = ConcreteReality(abstract) as AnAbstractIdea
-        )//, typeKey = AnAbstractIdea::class.java)
+        typeSafeMapMap.putAs(key = abstract, value = ConcreteReality(abstract) as AnAbstractIdea)
         val retrieved: AnAbstractIdea = typeSafeMapMap.get(abstract)
         assertThat(retrieved.data).isEqualTo(abstract)
     }
-
-
 }
