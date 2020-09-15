@@ -99,6 +99,11 @@ jar {
     }
 }
 
+task sourcesJar(type: Jar, group: "build") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.allSource)
+}
+
 shadowJar {
     baseName = 'TypeSafeMapMap-shadow'
     classifier = ''
