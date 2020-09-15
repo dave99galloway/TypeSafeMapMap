@@ -69,7 +69,7 @@ class TypeSafeMapMapTest {
         val valToSave = this
         val keyToSave = "TypeSafeMapMapTest"
         typeSafeMapMap.put(key = keyToSave, value = valToSave)
-        val retrieved: TypeSafeMapMapTest = typeSafeMapMap.get(keyToSave)
+        val retrieved: StoreByInterfaceTest = typeSafeMapMap.get(keyToSave)
         assertThat(retrieved).isEqualTo(valToSave)
     }
 
