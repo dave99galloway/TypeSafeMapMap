@@ -66,12 +66,12 @@ class TypeSafeMapMap : ITypeSafeMapMap {
     //    }
 }
 
-inline fun <K : Any, V : Any, reified I : Any> ITypeSafeMapMap.putAs(key: K, value: V) {
+inline fun <K : Any, reified V : Any> ITypeSafeMapMap.putAs(key: K, value: V) {//, typeKey: Class<I>) {
     val masterMap = synchronizedMap(map)
     synchronized(masterMap) {
         /*TODO:- this is the big one, can we remove this unchecked cast and still make this class work?*/
         @Suppress("UNCHECKED_CAST")
-        val linkedMap = masterMap.computeIfAbsent(I::class.java) {
+        val linkedMap = masterMap.computeIfAbsent(V::class.java) {
             LinkedMap<Any, V>()
         } as LinkedMap<Any, V>
         val syncMap = synchronizedMap(linkedMap)

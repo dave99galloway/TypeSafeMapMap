@@ -1,5 +1,6 @@
 package com.github.dave99galloway.typesafemapmap.test
 
+import com.github.dave99galloway.typesafemapmap.ITypeSafeMapMap
 import com.github.dave99galloway.typesafemapmap.TypeSafeMapMap
 import com.github.dave99galloway.typesafemapmap.get
 import com.github.dave99galloway.typesafemapmap.putAs
@@ -10,7 +11,7 @@ import org.junit.Test
 
 class StoreByInterfaceTest {
 
-    private lateinit var typeSafeMapMap: TypeSafeMapMap
+    private lateinit var typeSafeMapMap: ITypeSafeMapMap
 
     @Before
     fun setUp() {
@@ -43,10 +44,33 @@ class StoreByInterfaceTest {
     }
 
     @Test
-    fun storeAbstract() {
+    fun storeConcreteAsAbstract() {
         val abstract = "abstract"
         //val abstraction: AnAbstractIdea = ConcreteReality(abstract)
-        typeSafeMapMap.putAs<String, AnAbstractIdea, AnAbstractIdea>(key = abstract, value = ConcreteReality(abstract))
+        typeSafeMapMap.putAs<String, AnAbstractIdea>(
+            key = abstract,
+            value = ConcreteReality(abstract)
+        )//, typeKey = AnAbstractIdea::class.java)
+        val retrieved: AnAbstractIdea = typeSafeMapMap.get(abstract)
+        assertThat(retrieved.data).isEqualTo(abstract)
+    }
+
+    @Test
+    fun storeAbstractAsAbstract() {
+        val abstract = "abstract"
+        val abstraction: AnAbstractIdea = ConcreteReality(abstract)
+        typeSafeMapMap.putAs(key = abstract, value = abstraction) //,typeKey = AnAbstractIdea::class.java)
+        val retrieved: AnAbstractIdea = typeSafeMapMap.get(abstract)
+        assertThat(retrieved.data).isEqualTo(abstract)
+    }
+
+    @Test
+    fun storeConcreteAsAbstractWithSafeCast() {
+        val abstract = "abstract"
+        typeSafeMapMap.putAs(
+            key = abstract,
+            value = ConcreteReality(abstract) as AnAbstractIdea
+        )//, typeKey = AnAbstractIdea::class.java)
         val retrieved: AnAbstractIdea = typeSafeMapMap.get(abstract)
         assertThat(retrieved.data).isEqualTo(abstract)
     }
