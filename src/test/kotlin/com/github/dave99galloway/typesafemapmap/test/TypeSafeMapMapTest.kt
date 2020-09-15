@@ -35,7 +35,6 @@ class TypeSafeMapMapTest {
         typeSafeMapMap.put(key = keyToSave, value = valToSave)
         val retrieved: String = typeSafeMapMap.get(keyToSave)
         assertThat(retrieved).isEqualTo(valToSave)
-
     }
 
     @Test
