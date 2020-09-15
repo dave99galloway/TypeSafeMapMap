@@ -31,6 +31,17 @@ publishing {
                 password = System.getenv("MAVEN_PASSWORD")
             }
         }
+        afterEvaluate {
+            publications {
+                libJar(MavenPublication) {
+                    from components["kotlin"]
+                    artifact(tasks["sourcesJar"])
+                    pom {
+                        description.set("repro of https://github.com/clarkbw/github-registry-repro/blob/master/build.gradle")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -70,7 +81,7 @@ test {
     onOutput { descriptor, event ->
         logger.lifecycle("Test: $descriptor produced standard out/err: $event.message")
     }
-    finalizedBy jacocoTestReport
+    finalizedB  y jacocoTestReport
 }
 
 jar {
