@@ -34,11 +34,10 @@ class StoreByInterfaceTest {
         }
     }
 
-
     @Test
     fun storeConcrete() {
         val concrete = "Concrete"
-        typeSafeMapMap.put(concrete, ConcreteReality(concrete))
+        typeSafeMapMap.putAs(concrete, ConcreteReality(concrete))
         val retrieved: ConcreteReality = typeSafeMapMap.get(concrete)
         assertThat(retrieved.data).isEqualTo(concrete)
     }
