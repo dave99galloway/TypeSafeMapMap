@@ -94,6 +94,14 @@ inline fun <reified V, R> ITypeSafeMapMap.forEach(action: (entry: V) -> R) {
     }
 }
 
+inline fun <reified V, R> ITypeSafeMapMap.mapWith(action: (entry: Map.Entry<Any, V>) -> R): List<R> {
+    @Suppress("UNCHECKED_CAST")
+    val allEntriesOfV = this.map[V::class.java] as LinkedMap<Any, V>
+    return allEntriesOfV.map {
+        action(it)
+    }
+}
+
 
 class NoneOfThisTypeStoredException(valueType: Any, cause: Throwable) :
     Exception("No instances of $valueType are stored here", cause)

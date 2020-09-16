@@ -16,10 +16,7 @@
 
 package com.github.dave99galloway.typesafemapmap.test
 
-import com.github.dave99galloway.typesafemapmap.ITypeSafeMapMap
-import com.github.dave99galloway.typesafemapmap.TypeSafeMapMap
-import com.github.dave99galloway.typesafemapmap.forEach
-import com.github.dave99galloway.typesafemapmap.get
+import com.github.dave99galloway.typesafemapmap.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -49,6 +46,19 @@ class ActLikeAMutableIterableTest {
         val ints = mutableListOf<Int>()
         typeSafeMapMap.forEach<Int, Unit> {
             ints.add(it)
+        }
+        assertThat(ints).isEqualTo((1..10).toList())
+    }
+
+    @Test
+    fun mapWithInts() {
+        for (x in 1..10) {
+            typeSafeMapMap.put(key = x, value = x)
+            val retrieved: Int = typeSafeMapMap.get(x)
+            assertThat(retrieved).isEqualTo(x)
+        }
+        val ints = typeSafeMapMap.mapWith<Int, Int> {
+            it.value
         }
         assertThat(ints).isEqualTo((1..10).toList())
     }
