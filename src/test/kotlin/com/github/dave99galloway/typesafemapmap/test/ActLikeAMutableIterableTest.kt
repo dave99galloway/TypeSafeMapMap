@@ -17,6 +17,8 @@
 package com.github.dave99galloway.typesafemapmap.test
 
 import com.github.dave99galloway.typesafemapmap.*
+import com.github.dave99galloway.typesafemapmap.test.StoreByInterfaceTest.AnAbstractIdea
+import com.github.dave99galloway.typesafemapmap.test.StoreByInterfaceTest.ConcreteReality
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -38,11 +40,7 @@ class ActLikeAMutableIterableTest {
 
     @Test
     fun iterateOverInts() {
-        for (x in 1..10) {
-            typeSafeMapMap.put(key = x, value = x)
-            val retrieved: Int = typeSafeMapMap.get(x)
-            assertThat(retrieved).isEqualTo(x)
-        }
+        1.rangeTo(10).forEach { typeSafeMapMap.put(key = it, value = it) }
         val ints = mutableListOf<Int>()
         typeSafeMapMap.forEach<Int, Unit> {
             ints.add(it)
@@ -52,14 +50,45 @@ class ActLikeAMutableIterableTest {
 
     @Test
     fun mapWithInts() {
-        for (x in 1..10) {
-            typeSafeMapMap.put(key = x, value = x)
-            val retrieved: Int = typeSafeMapMap.get(x)
-            assertThat(retrieved).isEqualTo(x)
-        }
+        1.rangeTo(10).forEach { typeSafeMapMap.put(key = it, value = it) }
         val ints = typeSafeMapMap.mapWith<Int, Int> {
             it.value
         }
         assertThat(ints).isEqualTo((1..10).toList())
+    }
+
+    @Test
+    fun operateDirectlyOnMapWithInts() {
+        1.rangeTo(10).forEach { typeSafeMapMap.put(key = it, value = it) }
+        val ints = typeSafeMapMap.allEntriesOfV<Int>().map { it.value }
+        assertThat(ints).isEqualTo((1..10).toList())
+    }
+
+    @Test
+    fun operateDirectlyOnMapOfAbstractItems() {
+        val abstract = "abstract"
+        0.rangeTo(10).forEach {
+            val abstraction: AnAbstractIdea = ConcreteReality(data = "$abstract$it")
+            typeSafeMapMap.putAs(key = "$abstract$it", value = abstraction)
+        }
+        typeSafeMapMap.allEntriesOfV<AnAbstractIdea>().values.forEachIndexed { i: Int, idea: AnAbstractIdea ->
+            assertThat(idea.data).isEqualTo("$abstract$i")
+            assertThat(idea.doThing("$abstract$i")).isTrue()
+        }
+    }
+
+    @Test
+    fun removeEntriesOnMapOfAbstractItems() {
+        val abstract = "abstract"
+        0.rangeTo(10).forEach {
+            val abstraction: AnAbstractIdea = ConcreteReality(data = "$abstract$it")
+            typeSafeMapMap.putAs(key = "$abstract$it", value = abstraction)
+        }
+        typeSafeMapMap.allEntriesOfV<AnAbstractIdea>().values.forEachIndexed { i: Int, idea: AnAbstractIdea ->
+            assertThat(idea.data).isEqualTo("$abstract$i")
+            assertThat(idea.doThing("$abstract$i")).isTrue()
+        }
+        typeSafeMapMap.mutableEntriesOfV<AnAbstractIdea>().clear()
+        assertThat(typeSafeMapMap.allEntriesOfV<AnAbstractIdea>()).isEmpty()
     }
 }
