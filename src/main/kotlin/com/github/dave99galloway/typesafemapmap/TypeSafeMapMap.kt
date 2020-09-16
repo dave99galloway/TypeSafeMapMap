@@ -86,6 +86,27 @@ inline fun <K : Any, reified V : Any> ITypeSafeMapMap.putAs(key: K, value: V) {
     }
 }
 
+inline fun <reified V> ITypeSafeMapMap.mutableEntriesOfV(): MutableMap<Any, V> {
+    @Suppress("UNCHECKED_CAST")
+    return this.map[V::class.java] as LinkedMap<Any, V>
+}
+
+inline fun <reified V> ITypeSafeMapMap.allEntriesOfV(): Map<Any, V> {
+    @Suppress("UNCHECKED_CAST")
+    return this.map[V::class.java] as LinkedMap<Any, V>
+}
+
+inline fun <reified V, R> ITypeSafeMapMap.forEach(action: (entry: V) -> R) {
+    allEntriesOfV<V>().forEach {
+        action(it.value!!)
+    }
+}
+
+inline fun <reified V, R> ITypeSafeMapMap.mapWith(action: (entry: Map.Entry<Any, V>) -> R): List<R> {
+    return allEntriesOfV<V>().map {
+        action(it)
+    }
+}
 
 class NoneOfThisTypeStoredException(valueType: Any, cause: Throwable) :
     Exception("No instances of $valueType are stored here", cause)
