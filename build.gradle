@@ -8,7 +8,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id 'net.nemerosa.versioning' version '2.8.2'
 }
-def artifact_version = '0.1.10'
+def artifact_version = '0.1.11'
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
 group 'com.github.dave99galloway'
 version artifact_version
