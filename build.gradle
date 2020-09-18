@@ -8,7 +8,7 @@ plugins {
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id 'net.nemerosa.versioning' version '2.8.2'
-    id "com.jfrog.bintray" version "1.7.3"
+    id "com.jfrog.bintray" version "1.8.5"
 }
 apply plugin: "com.jfrog.bintray"
 
@@ -39,27 +39,23 @@ def pomConfig = {
 }
 
 publishing {
-//    publications {
-//        mavenPublication(MavenPublication) {
-//            from components.java
-//            artifact sourcesJar {
-//                classifier "sources"
-//            }
-//            artifact javadocJar {
-//                classifier "javadoc"
-//            }
-//            groupId 'icom.github.dave99galloway.TypeSafeMapMap'
-//            artifactId 'typesafemapmap'
-//            version artifact_version
-//            pom.withXml {
-//                def root = asNode()
-//                root.appendNode('description', 'A type safe Map of Maps where the outer map items are stored by type of the values in the inner maps')
-//                root.appendNode('name', 'TypeSafeMapMap (TSMM)')
-//                root.appendNode('url', 'https://github.com/dave99galloway/TypeSafeMapMap')
-//                root.children().last() + pomConfig
-//            }
-//        }
-//    }
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.kotlin
+//            artifact sourcesJar
+//            artifact javadocJar
+            groupId 'com.github.dave99galloway.TypeSafeMapMap'
+            artifactId 'typesafemapmap'
+            version "$artifact_version"
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'A type safe Map of Maps where the outer map items are stored by type of the values in the inner maps')
+                root.appendNode('name', 'TypeSafeMapMap (TSMM)')
+                root.appendNode('url', 'https://github.com/dave99galloway/TypeSafeMapMap')
+                root.children().last() + pomConfig
+            }
+        }
+    }
     repositories {
         maven {
             name = "GitHubPackages"
@@ -127,8 +123,9 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'git@github.com:dave99galloway/TypeSafeMapMap.git'
         version {
-            name = artifact_version
-            desc = artifact_version
+            name = "$artifact_version"
+            desc = "$artifact_version"
+            vcsTag = "$artifact_version"
             released = new Date()
         }
     }

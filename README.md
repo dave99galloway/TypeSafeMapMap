@@ -11,7 +11,7 @@ in tests this can be used to store lots of related items of different types and 
 ### Usage 
 you can add this dependency to your build.gradle ...
 ```groovy
-compile 'com.github.dave99galloway.TypeSafeMapMap:typesafemapmap:0.1.10'
+compile 'com.github.dave99galloway.TypeSafeMapMap:typesafemapmap:0.1.13'
 ```
 BUT you need to provide your username and a token to do this. I figure most people won't do this so follow the workaround below:-
 currently not published as a package on maven central or github packages. until this is resolved, use this workaround in your build.gradle
@@ -39,7 +39,7 @@ dependencies {
 ...
 
 task downloadFile(type: Download) {
-    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.1.11/TypeSafeMapMap-shadow.jar'
+    src 'https://github.com/dave99galloway/TypeSafeMapMap/releases/download/0.1.13/TypeSafeMapMap-shadow.jar'
     dest 'libs'// buildDir
     onlyIfModified  true
 }
