@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+    id("org.jetbrains.dokka") version "1.4.0"
     id 'jacoco'
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "6.0.0"
@@ -102,6 +103,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
     testCompile "org.assertj:assertj-core:3.11.1"
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.0")
+
 }
 
 compileKotlin {
@@ -165,6 +168,11 @@ jar {
 task sourcesJar(type: Jar, group: "build", dependsOn: classes) {
     archiveClassifier.set("sources")
     from(sourceSets.main.allSource)
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
 }
 
 javadoc.failOnError = false
