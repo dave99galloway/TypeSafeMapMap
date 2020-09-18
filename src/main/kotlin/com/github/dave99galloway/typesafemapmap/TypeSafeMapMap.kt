@@ -20,6 +20,11 @@ import org.apache.commons.collections4.map.LinkedMap
 import java.lang.reflect.Type
 import java.util.Collections.synchronizedMap
 
+/**
+ * The ITypeSafeMapMap (TSMM) interface. Currently requires just a map and a put method.
+ * most of the work in this implementation is done via extension methods on ITypeSafeMapMap
+ * @property map LinkedHashMap<Type, Any> - the top level map that TSMM implementations need to create to hold child maps
+ */
 interface ITypeSafeMapMap {
     /*TODO: - can we remove this map property and still make the get work? */
     val map: LinkedHashMap<Type, Any>
