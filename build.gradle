@@ -103,13 +103,13 @@ publishing {
 //    }
 //}
 
-// Create a task using the task type
-tasks.register('checkCreds') {
-    doLast {
-        println "sonatypeUsername=$sonatypeUsername"
-    }
-}
-
+//// Create a task using the task type
+//tasks.register('checkCreds') {
+//    doLast {
+//        println "sonatypeUsername=$sonatypeUsername"
+//    }
+//}
+//
 
 def customizePom(pom) {
     pom.withXml {
@@ -137,8 +137,8 @@ def customizePom(pom) {
             }
             licenses {
                 license {
-                    name 'Apache License 2.0'
-                    url 'https://github.com/mautini/schemaorg-java/blob/master/LICENSE'
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     distribution 'repo'
                 }
             }
@@ -149,7 +149,7 @@ def customizePom(pom) {
             }
             developers {
                 developer {
-                    name 'Dave Galloway'
+                    name 'dave.99.galloway'
                 }
             }
         }
