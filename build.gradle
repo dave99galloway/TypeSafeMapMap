@@ -13,231 +13,191 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'signing'
 
 def artifact_version = '0.1.14'
 def artifactName = 'TypeSafeMapMap'
 //mvn jira request https://issues.sonatype.org/browse/OSSRH-60165
 group 'com.github.dave99galloway'
+archivesBaseName = artifactName
 version artifact_version
 
 
-task sourceJar(type: Jar) {
+task sourcesJar(type: Jar) {
     classifier "sources"
     from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier "javadoc"
-    from javadoc.destinationDir
+    from javadoc
 }
 
 artifacts {
-    archives jar
-    archives sourceJar
-    archives javadocJar
+    archives javadocJar, sourcesJar
 }
 
 signing {
     sign configurations.archives
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            customizePom(pom)
-            groupId group
-            artifactId artifactName
-            version artifact_version
 
-            from components.java
-
-            // create the sign pom artifact
-            pom.withXml {
-                def pomFile = file("${project.buildDir}/generated-pom.xml")
-                writeTo(pomFile)
-                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-                artifact(pomAscFile) {
-                    classifier = null
-                    extension = 'pom.asc'
-                }
-            }
-
-            artifact(sourceJar) {
-                classifier = 'sources'
-            }
-            artifact(javadocJar) {
-                classifier = 'javadoc'
-            }
-
-            // create the signed artifacts
-            project.tasks.signArchives.signatureFiles.eachWithIndex {sigFile, i->
-                artifact(sigFile) {
-                    def matcher = sigFile.file =~ /-(sources|javadoc)\.jar\.asc$/
-                    if (matcher.find()) {
-                        classifier = "signed-$i" //matcher.group(1)
-                    } else {
-                        classifier = "unknown-$i"
-                    }
-                    extension = 'jar.asc'
-                }
-            }
-        }
-    }
+uploadArchives {
     repositories {
-        maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username sonatypeUsername
-                password sonatypePassword
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
             }
-        }
-    }
-}
-//
-//abstract class CheckCreds extends DefaultTask {
-//    @TaskAction
-//    def checkTheCreds() {
-//        println "sonatypeUsername=$sonatypeUsername"
-//    }
-//}
 
-//// Create a task using the task type
-//tasks.register('checkCreds') {
-//    doLast {
-//        println "sonatypeUsername=$sonatypeUsername"
-//    }
-//}
-//
-
-def customizePom(pom) {
-    pom.withXml {
-        def root = asNode()
-
-        // eliminate test-scoped dependencies (no need in maven central POMs)
-        root.dependencies.removeAll { dep ->
-            dep.scope == "test"
-        }
-
-        // add all items necessary for maven central publication
-        root.children().last() + {
-            resolveStrategy = Closure.DELEGATE_FIRST
-
-            description 'A type safe Map of Maps where the outer map items are stored by type of the values in the inner maps\''
-            name 'Type Safe Map Map'
-            url 'https://github.com/dave99galloway/TypeSafeMapMap'
-            organization {
-                name 'com.github.dave99galloway'
-                url 'https://github.com/dave99galloway'
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
             }
-            issueManagement {
-                system 'GitHub'
-                url 'https://github.com/dave99galloway/TypeSafeMapMap/issues'
-            }
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-            scm {
+
+            pom.project {
+                name = artifactName
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'A type safe Map of Maps where the outer map items are stored by type of the values in the inner maps'
                 url 'https://github.com/dave99galloway/TypeSafeMapMap'
-                connection 'scm:git:git://github.com/dave99galloway/TypeSafeMapMap.git'
-                developerConnection 'scm:git:ssh://github.com/dave99galloway/TypeSafeMapMap.git'
-            }
-            developers {
-                developer {
-                    name 'dave.99.galloway'
+
+                scm {
+                    connection 'scm:git:git://github.com/dave99galloway/TypeSafeMapMap.git'
+                    developerConnection 'scm:git:ssh://github.com/dave99galloway/TypeSafeMapMap.git'
+                    url 'https://github.com/dave99galloway/TypeSafeMapMap'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name 'dave.99.galloway'
+                    }
                 }
             }
         }
     }
 }
 
-model {
-    tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/generated-pom.xml")
-    }
-    tasks.publishMavenJavaPublicationToMavenLocal {
-        dependsOn project.tasks.signArchives
-    }
-    tasks.publishMavenJavaPublicationToMavenRepository {
-        dependsOn project.tasks.signArchives
-    }
-}
-
-//
-//def pomConfig = {
-//    licenses {
-//        license {
-//            name "The Apache Software License, Version 2.0"
-//            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-//            distribution "repo"
-//        }
-//    }
-//    developers {
-//        developer {
-//            id "dave99galloway"
-//            name "dave galloway"
-//            email "dave99galloway@users.noreply.github.com"
-//        }
-//    }
-//
-//    scm {
-//        url "https://github.com/dave99galloway/TypeSafeMapMap"
-//    }
-//}
 //
 //publishing {
 //    publications {
-//        mavenPublication(MavenPublication) {
-//            from components.kotlin
-////            artifact sourcesJar
-////            artifact javadocJar
-//            groupId 'com.github.dave99galloway.TypeSafeMapMap'
-//            artifactId 'typesafemapmap'
-//            version "$artifact_version"
+//        mavenJava(MavenPublication) {
+//            customizePom(pom)
+//            groupId group
+//            artifactId artifactName
+//            version artifact_version
+//
+//            from components.java
+//
+//            // create the sign pom artifact
 //            pom.withXml {
-//                def root = asNode()
-//                root.appendNode('description', 'A type safe Map of Maps where the outer map items are stored by type of the values in the inner maps')
-//                root.appendNode('name', 'TypeSafeMapMap (TSMM)')
-//                root.appendNode('url', 'https://github.com/dave99galloway/TypeSafeMapMap')
-//                root.children().last() + pomConfig
+//                def pomFile = file("${project.buildDir}/generated-pom.xml")
+//                writeTo(pomFile)
+//                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+//                artifact(pomAscFile) {
+//                    classifier = null
+//                    extension = 'pom.asc'
+//                }
+//            }
+//
+//            artifact(sourcesJar) {
+//                classifier = 'sources'
+//            }
+//            artifact(javadocJar) {
+//                classifier = 'javadoc'
+//            }
+//
+//            // create the signed artifacts
+//            project.tasks.signArchives.signatureFiles.eachWithIndex {sigFile, i->
+//                artifact(sigFile) {
+//                    def matcher = sigFile.file =~ /-(sources|javadoc)\.jar\.asc$/
+//                    if (matcher.find()) {
+//                        classifier = "signed-$i" //matcher.group(1)
+//                    } else {
+//                        classifier = "unknown-$i"
+//                    }
+//                    extension = 'jar.asc'
+//                }
 //            }
 //        }
 //    }
 //    repositories {
-////        maven {
-////            name = "GitHubPackages"
-////            url = "https://maven.pkg.github.com/dave99galloway/TypeSafeMapMap"
-////            credentials {
-////                username = System.getenv("GITHUB_ACTOR")
-////                password = System.getenv("GITHUB_TOKEN")
-////            }
-////        }
 //        maven {
-//            name = "OSSRH"
-//            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 //            credentials {
-//                username = System.getenv("MAVEN_USERNAME")
-//                password = System.getenv("MAVEN_PASSWORD")
+//                username sonatypeUsername
+//                password sonatypePassword
 //            }
 //        }
-//        afterEvaluate {
-//            publications {
-//                libJar(MavenPublication) {
-//                    from components["kotlin"]
-//                    artifact(tasks["sourcesJar"])
-//                    pom {
-//                        description.set("repro of https://github.com/clarkbw/github-registry-repro/blob/master/build.gradle")
-//                    }
+//    }
+//}
+//
+//
+//def customizePom(pom) {
+//    pom.withXml {
+//        def root = asNode()
+//
+//        // eliminate test-scoped dependencies (no need in maven central POMs)
+//        root.dependencies.removeAll { dep ->
+//            dep.scope == "test"
+//        }
+//
+//        // add all items necessary for maven central publication
+//        root.children().last() + {
+//            resolveStrategy = Closure.DELEGATE_FIRST
+//
+//            description 'A type safe Map of Maps where the outer map items are stored by type of the values in the inner maps\''
+//            name 'Type Safe Map Map'
+//            url 'https://github.com/dave99galloway/TypeSafeMapMap'
+//            organization {
+//                name 'com.github.dave99galloway'
+//                url 'https://github.com/dave99galloway'
+//            }
+//            issueManagement {
+//                system 'GitHub'
+//                url 'https://github.com/dave99galloway/TypeSafeMapMap/issues'
+//            }
+//            licenses {
+//                license {
+//                    name 'The Apache Software License, Version 2.0'
+//                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    distribution 'repo'
+//                }
+//            }
+//            scm {
+//                url 'https://github.com/dave99galloway/TypeSafeMapMap'
+//                connection 'scm:git:git://github.com/dave99galloway/TypeSafeMapMap.git'
+//                developerConnection 'scm:git:ssh://github.com/dave99galloway/TypeSafeMapMap.git'
+//            }
+//            developers {
+//                developer {
+//                    name 'dave.99.galloway'
 //                }
 //            }
 //        }
 //    }
 //}
+//
+//model {
+//    tasks.generatePomFileForMavenJavaPublication {
+//        destination = file("$buildDir/generated-pom.xml")
+//    }
+//    tasks.publishMavenJavaPublicationToMavenLocal {
+//        dependsOn project.tasks.signArchives
+//    }
+//    tasks.publishMavenJavaPublicationToMavenRepository {
+//        dependsOn project.tasks.signArchives
+//    }
+//}
+//
 
 sourceCompatibility = 1.8
 
@@ -297,27 +257,6 @@ jar {
         )
     }
 }
-//
-//task sourcesJar(type: Jar, group: "build", dependsOn: classes) {
-//    archiveClassifier.set("sources")
-//    from(sourceSets.main.allSource)
-//}
-//
-//javadoc {
-//    source = sourceSets.main.allJava
-//    classpath = configurations.compile
-//}
-//
-//javadoc.failOnError = false
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    classifier = 'javadoc'
-//    from javadoc.destinationDir
-//}
-//
-//artifacts {
-//    archives sourcesJar
-//    archives javadocJar
-//}
 
 shadowJar {
     baseName = 'TypeSafeMapMap'
