@@ -26,11 +26,8 @@ import java.util.Collections.synchronizedMap
  * @property map LinkedHashMap<Type, Any> - the top level map that TSMM implementations need to create to hold child maps
  */
 interface ITypeSafeMapMap {
-    /*TODO: - can we remove this map property and still make the get work? */
     val map: LinkedHashMap<Type, Any>
     fun <K : Any, V : Any> put(key: K, value: V)
-
-    /* TODO: implement the rest of MutableMap<K,V> (Or even non generic version) interface methods where possible? */
 }
 
 inline fun <K : Any, reified V : Any> ITypeSafeMapMap.get(key: K): V {
